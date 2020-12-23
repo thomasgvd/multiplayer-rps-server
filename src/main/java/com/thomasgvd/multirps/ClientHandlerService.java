@@ -4,15 +4,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ClientHandlerService implements Runnable {
 
     private Socket socket;
+    private Server server;
     private PrintWriter writer;
     private BufferedReader reader;
 
-    public ClientHandlerService(Socket socket) {
+    public ClientHandlerService(Server server, Socket socket) {
+        this.server = server;
         this.socket = socket;
     }
 
@@ -53,9 +56,9 @@ public class ClientHandlerService implements Runnable {
     }
 
     private boolean authenticateUser(String userName, String password) {
-        return userName.equals("user1") && password.equals("pass1") ||
-                userName.equals("user2") && password.equals("pass2") ||
-                userName.equals("user3") && password.equals("pass3");
+        return server.getUsers().stream()
+                .filter(u -> u.getUserName().equals(userName) && u.getPassword().equals(password))
+                .count() == 1;
     }
 
     private void disconnect() {
