@@ -13,6 +13,8 @@ public class Server {
     private Socket socket;
     private Set<MyUser> users;
 
+    public final static int PLAYER_SPEED = 5;
+
     public Server(int port) {
         users = new HashSet<>();
         users.add(new MyUser("user1", "pass1"));
