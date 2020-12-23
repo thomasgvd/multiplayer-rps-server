@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.thomasgvd.multirps.Server.PLAYER_SPEED;
 
@@ -13,7 +15,6 @@ public class ClientHandlerService implements Runnable {
 
     private Socket socket;
     private Server server;
-    private PrintWriter writer;
     private BufferedReader reader;
     private MyUser user;
 
@@ -27,29 +28,41 @@ public class ClientHandlerService implements Runnable {
         try {
             do {
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                writer = new PrintWriter(socket.getOutputStream());
                 String input = reader.readLine();
                 System.out.println("packet received : " + input);
 
                 String[] inputArray = input.split("\\|");
 
                 int packetType = Integer.parseInt(inputArray[0]);
+                boolean sendResponse = false;
+                String response = "";
 
                 if (packetType == PacketType.CONNECTION.getValue() && inputArray.length == 3) {
                     System.out.println("handle connection request");
-                    String response = handleConnection(inputArray[1], inputArray[2]);
-                    System.out.println("respond with : " + response);
-                    writer.write(response);
-                    writer.flush();
-                } else if (packetType == PacketType.MOVEMENT.getValue() && inputArray.length == 3) {
+                    response = handleConnection(inputArray[1], inputArray[2]);
+                    sendResponse = true;
+                } else if (packetType == PacketType.MOVEMENT.getValue() && inputArray.length == 4) {
                     System.out.println("handle movement request");
-                    String response = handleMovement(Integer.parseInt(inputArray[1]), Integer.parseInt(inputArray[2]));
-                    System.out.println("respond with : " + response);
-                    writer.write(response);
-                    writer.flush();
+                    response = handleMovement(Integer.parseInt(inputArray[2]), Integer.parseInt(inputArray[3]));
+                    sendResponse = true;
                 } else {
                     System.out.println("bad request"); // Discard packet
                 }
+
+                if (sendResponse) {
+                    System.out.println("respond with : " + response);
+
+                    List<MyUser> connectedUsers = server.getUsers().stream()
+                            .filter(u -> u.getSocket() != null)
+                            .collect(Collectors.toList());
+
+                    for (MyUser user : connectedUsers) {
+                        PrintWriter writer = new PrintWriter(user.getSocket().getOutputStream());
+                        writer.write(response);
+                        writer.flush();
+                    }
+                }
+
             } while (true);
         } catch (IOException e) {
             disconnect();
@@ -65,6 +78,7 @@ public class ClientHandlerService implements Runnable {
         user.setPosY(user.getPosY() + (yMovement * PLAYER_SPEED));
 
         response.append(PacketType.MOVEMENT.getValue()).append("|")
+                .append(user.getUserName()).append("|")
                 .append(user.getPosX()).append("|")
                 .append(user.getPosY());
 
@@ -85,6 +99,7 @@ public class ClientHandlerService implements Runnable {
 
         if (userOptional.isPresent()) {
             user = userOptional.get();
+            user.setSocket(socket);
             return true;
         }
 
@@ -94,7 +109,6 @@ public class ClientHandlerService implements Runnable {
     private void disconnect() {
         System.out.println("disconnect socket" + socket);
         try { reader.close(); } catch (Exception e) { e.printStackTrace(); }
-        try { writer.close(); } catch (Exception e) { e.printStackTrace(); }
-        try { socket.close(); } catch (Exception e) { e.printStackTrace(); }
+        try { socket.close(); user.setSocket(null); } catch (Exception e) { e.printStackTrace(); }
     }
 }

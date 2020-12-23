@@ -1,5 +1,7 @@
 package com.thomasgvd.multirps;
 
+import java.net.Socket;
+
 public class MyUser {
 
     private int id;
@@ -9,6 +11,7 @@ public class MyUser {
     private int losses;
     private int posX;
     private int posY;
+    private Socket socket;
 
     public MyUser(String userName, String password) {
         this.userName = userName;
@@ -17,6 +20,7 @@ public class MyUser {
         losses = 0;
         posX = 400;
         posY = 300;
+        socket = null;
     }
 
     public int getId() {
@@ -81,5 +85,13 @@ public class MyUser {
 
     public void setPosY(int posY) {
         this.posY = posY;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
     }
 }
