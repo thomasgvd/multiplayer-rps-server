@@ -1,6 +1,7 @@
 package com.thomasgvd.multirps;
 
 import java.net.Socket;
+import java.util.Objects;
 
 public class MyUser {
 

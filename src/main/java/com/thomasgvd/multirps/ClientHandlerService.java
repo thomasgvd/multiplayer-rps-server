@@ -35,6 +35,7 @@ public class ClientHandlerService implements Runnable {
 
                 int packetType = Integer.parseInt(inputArray[0]);
                 boolean sendResponse = false;
+                boolean sendResponseToAll = false;
                 String response = "";
 
                 if (packetType == PacketType.CONNECTION.getValue() && inputArray.length == 3) {
@@ -44,23 +45,23 @@ public class ClientHandlerService implements Runnable {
                 } else if (packetType == PacketType.MOVEMENT.getValue() && inputArray.length == 4) {
                     System.out.println("handle movement request");
                     response = handleMovement(Integer.parseInt(inputArray[2]), Integer.parseInt(inputArray[3]));
-                    sendResponse = true;
+                    sendResponseToAll = true;
                 } else {
                     System.out.println("bad request"); // Discard packet
                 }
 
-                if (sendResponse) {
-                    System.out.println("respond with : " + response);
-
+                if (sendResponseToAll) {
                     List<MyUser> connectedUsers = server.getUsers().stream()
                             .filter(u -> u.getSocket() != null)
                             .collect(Collectors.toList());
 
-                    for (MyUser user : connectedUsers) {
-                        PrintWriter writer = new PrintWriter(user.getSocket().getOutputStream());
-                        writer.write(response);
-                        writer.flush();
+                    for (MyUser u : connectedUsers) {
+                        System.out.println("============ respond to " + u.getUserName() + " with : " + response);
+                        sendResponse(u.getSocket(), response);
                     }
+                } else if (sendResponse) {
+                    System.out.println("============ respond to " + user.getUserName() + " with : " + response);
+                    sendResponse(socket, response);
                 }
 
             } while (true);
@@ -70,9 +71,14 @@ public class ClientHandlerService implements Runnable {
         }
     }
 
+    private void sendResponse(Socket s, String r) throws IOException {
+        PrintWriter writer = new PrintWriter(s.getOutputStream());
+        writer.write(r);
+        writer.flush();
+    }
+
     private String handleMovement(int xMovement, int yMovement) {
         StringBuilder response = new StringBuilder("");
-        System.out.println("Movement : " + xMovement + " - " + yMovement);
 
         user.setPosX(user.getPosX() + (xMovement * PLAYER_SPEED));
         user.setPosY(user.getPosY() + (yMovement * PLAYER_SPEED));
@@ -88,7 +94,11 @@ public class ClientHandlerService implements Runnable {
     private String handleConnection(String userName, String password) {
         StringBuilder response = new StringBuilder("");
         boolean authenticated = authenticateUser(userName, password);
-        response.append(PacketType.CONNECTION.getValue()).append("|").append(authenticated ? "1" : "0");
+        response.append(PacketType.CONNECTION.getValue()).append("|")
+                .append(user.getUserName()).append("|")
+                .append(authenticated ? "1" : "0").append("|")
+                .append(user.getPosX()).append("|")
+                .append(user.getPosY());
         return response.toString();
     }
 
