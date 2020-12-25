@@ -16,17 +16,17 @@ public class ClientHandler implements Runnable {
     private MyUser user;
     private UserService userService;
 
-    public ClientHandler(Server server, Socket socket) {
+    public ClientHandler(Server server, Socket socket, UserService userService) {
         this.server = server;
         this.socket = socket;
-        this.userService = UserService.getInstance();
+        this.userService = userService;
     }
 
     @Override
     public void run() {
         try {
             do {
-                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                reader = createReader();
                 String input = reader.readLine();
                 System.out.println("packet received : " + input);
                 manageInput(input);
@@ -35,6 +35,10 @@ public class ClientHandler implements Runnable {
             disconnect();
             e.printStackTrace();
         }
+    }
+
+    private BufferedReader createReader() throws IOException {
+        return new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
     private void manageInput(String input) throws IOException {
@@ -95,9 +99,13 @@ public class ClientHandler implements Runnable {
 
     private void sendResponse(Socket s, String r) throws IOException {
         System.out.println("============ response : " + r);
-        PrintWriter writer = new PrintWriter(s.getOutputStream());
+        PrintWriter writer = createWriter(s);
         writer.write(r);
         writer.flush();
+    }
+
+    private PrintWriter createWriter(Socket s) throws IOException {
+        return new PrintWriter(s.getOutputStream());
     }
 
     private void disconnect() {

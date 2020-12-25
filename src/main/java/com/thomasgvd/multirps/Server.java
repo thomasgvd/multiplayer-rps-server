@@ -33,7 +33,7 @@ public class Server {
             do {
                 System.out.println("accept connections");
                 socket = serverSocket.accept();
-                Thread clientHandler = new Thread(new ClientHandler(this, socket), "Client Handler");
+                Thread clientHandler = new Thread(new ClientHandler(this, socket, UserService.getInstance()), "Client Handler");
                 clientHandler.start();
             } while (listening);
             socket.close();
