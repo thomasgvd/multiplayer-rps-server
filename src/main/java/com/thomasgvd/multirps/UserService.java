@@ -1,6 +1,7 @@
 package com.thomasgvd.multirps;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static com.thomasgvd.multirps.Server.PLAYER_SPEED;
 
@@ -41,16 +42,16 @@ public class UserService {
         return PacketType.CONNECTION.getValue() + "|" + userName + "|0|0|0";
     }
 
-    public boolean authenticateUser(Server server, String userName, String password) {
-        Optional<MyUser> userOptional = server.getUsers().stream()
+    public boolean authenticateUser(Set<MyUser> users, String userName, String password) {
+        Optional<MyUser> userOptional = users.stream()
                 .filter(u -> u.getUserName().equals(userName) && u.getPassword().equals(password))
                 .findAny();
 
         return userOptional.isPresent();
     }
 
-    public MyUser getUser(Server server, String userName) {
-        return server.getUsers().stream()
+    public MyUser getUser(Set<MyUser> users, String userName) {
+        return users.stream()
                 .filter(u -> u.getUserName().equals(userName))
                 .findFirst()
                 .orElse(null);

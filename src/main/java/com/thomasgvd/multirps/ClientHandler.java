@@ -70,8 +70,8 @@ public class ClientHandler implements Runnable {
 
     private String manageConnection(String userName, String password) {
         System.out.println("handle connection request");
-        if (userService.authenticateUser(server, userName, password)) {
-            user = userService.getUser(server, userName);
+        if (userService.authenticateUser(server.getUsers(), userName, password)) {
+            user = userService.getUser(server.getUsers(), userName);
             user.setSocket(socket);
             return userService.handleSuccessfulConnection(user);
         } else {
