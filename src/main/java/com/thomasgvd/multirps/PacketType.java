@@ -2,8 +2,7 @@ package com.thomasgvd.multirps;
 
 public enum PacketType {
     CONNECTION(0),
-    MOVEMENT(1),
-    DISCONNECT(2);
+    MOVEMENT(1);
 
     private final int value;
 
