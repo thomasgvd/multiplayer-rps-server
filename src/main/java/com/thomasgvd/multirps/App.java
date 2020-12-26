@@ -1,5 +1,7 @@
 package com.thomasgvd.multirps;
 
+import com.thomasgvd.multirps.networking.Server;
+
 public class App {
 
     public static void main(String[] args) {

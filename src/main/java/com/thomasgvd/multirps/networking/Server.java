@@ -1,4 +1,8 @@
-package com.thomasgvd.multirps;
+package com.thomasgvd.multirps.networking;
+
+import com.thomasgvd.multirps.models.MyUser;
+import com.thomasgvd.multirps.services.ResponseService;
+import com.thomasgvd.multirps.services.UserService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -33,8 +37,10 @@ public class Server {
             do {
                 System.out.println("accept connections");
                 socket = serverSocket.accept();
-                Thread clientHandler = new Thread(new ClientHandler(this, socket, UserService.getInstance()), "Client Handler");
-                clientHandler.start();
+                ClientHandler clientHandler = new ClientHandler(this, socket,
+                        UserService.getInstance(), ResponseService.getInstance());
+                Thread clientThread = new Thread(clientHandler, "Client Handler");
+                clientThread.start();
             } while (listening);
             socket.close();
 

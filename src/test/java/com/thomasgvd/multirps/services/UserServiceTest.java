@@ -1,15 +1,15 @@
-package com.thomasgvd.multirps;
+package com.thomasgvd.multirps.services;
 
+import com.thomasgvd.multirps.models.MyUser;
+import com.thomasgvd.multirps.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
 

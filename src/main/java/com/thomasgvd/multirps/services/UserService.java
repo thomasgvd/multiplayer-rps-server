@@ -1,9 +1,12 @@
-package com.thomasgvd.multirps;
+package com.thomasgvd.multirps.services;
+
+import com.thomasgvd.multirps.models.MyUser;
+import com.thomasgvd.multirps.models.PacketType;
 
 import java.util.Optional;
 import java.util.Set;
 
-import static com.thomasgvd.multirps.Server.PLAYER_SPEED;
+import static com.thomasgvd.multirps.networking.Server.PLAYER_SPEED;
 
 public class UserService {
 

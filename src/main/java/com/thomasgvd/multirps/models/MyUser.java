@@ -1,4 +1,4 @@
-package com.thomasgvd.multirps;
+package com.thomasgvd.multirps.models;
 
 import java.net.Socket;
 import java.util.Objects;
