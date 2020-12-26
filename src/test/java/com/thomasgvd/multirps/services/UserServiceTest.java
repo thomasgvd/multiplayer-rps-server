@@ -1,7 +1,6 @@
 package com.thomasgvd.multirps.services;
 
 import com.thomasgvd.multirps.models.MyUser;
-import com.thomasgvd.multirps.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,11 +8,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 
 public class UserServiceTest {
 
-    UserService userService = UserService.getInstance();
+    UserService userService;
     Set<MyUser> users;
 
     @Before
@@ -22,6 +20,7 @@ public class UserServiceTest {
         users.add(new MyUser("user1", "pass1"));
         users.add(new MyUser("user2", "pass2"));
         users.add(new MyUser("user3", "pass3"));
+        userService = new UserService();
     }
 
     @Test

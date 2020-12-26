@@ -39,7 +39,8 @@ public class ClientHandler implements Runnable {
                 System.out.println("packet received : " + input);
                 String[] inputArray = input.split("\\|");
 
-                Response response = responseService.manageInput(inputArray, server.getUsers(), user);
+                Response response = new Response();
+                response = responseService.manageInput(inputArray, response, server.getUsers(), user);
 
                 if (response.getType() == PacketType.CONNECTION.getValue() && response.isSuccessful()) {
                     user = userService.getUser(server.getUsers(), inputArray[1]);

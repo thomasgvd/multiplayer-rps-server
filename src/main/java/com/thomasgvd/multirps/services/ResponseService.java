@@ -9,21 +9,21 @@ import java.util.Set;
 
 public class ResponseService {
 
-    private static ResponseService instance = null;
     private UserService userService;
 
-    public static ResponseService getInstance() {
-        if (instance == null) instance = new ResponseService(UserService.getInstance());
-        return instance;
-    }
-
-    private ResponseService(UserService userService) {
+    public ResponseService(UserService userService) {
         this.userService = userService;
     }
 
-    public Response manageInput(String[] inputArray, Set<MyUser> users, MyUser user) throws IOException {
-        int packetType = Integer.parseInt(inputArray[0]);
-        Response response = new Response(packetType);
+    public Response manageInput(String[] inputArray, Response response, Set<MyUser> users, MyUser user) throws IOException {
+
+        int packetType = -1;
+        boolean validInput = checkInput(inputArray);
+
+        if (validInput) {
+            packetType = Integer.parseInt(inputArray[0]);
+            response.setType(packetType);
+        }
 
         if (isConnection(packetType, inputArray)) {
             String userName = inputArray[1];
@@ -44,6 +44,17 @@ public class ResponseService {
         }
 
         return response;
+    }
+
+    private boolean checkInput(String[] inputArray) {
+
+        // Perform some very basic input checking. Not exhaustive.
+        if (inputArray.length > 0) {
+            boolean firstEltIsSingleNumber = inputArray[0].length() == 1 && Character.isDigit(inputArray[0].charAt(0));
+            if (firstEltIsSingleNumber) return true;
+        }
+
+        return false;
     }
 
     private boolean isConnection(int packetType, String[] inputArray) {

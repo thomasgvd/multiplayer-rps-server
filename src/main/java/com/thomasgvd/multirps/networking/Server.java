@@ -16,16 +16,20 @@ public class Server {
     private ServerSocket serverSocket;
     private Socket socket;
     private Set<MyUser> users;
+    private UserService userService;
+    private ResponseService responseService;
 
     public final static int PLAYER_SPEED = 5;
 
-    public Server(int port) {
+    public Server(int port, UserService userService, ResponseService responseService) {
         users = new HashSet<>();
         users.add(new MyUser("user1", "pass1"));
         users.add(new MyUser("user2", "pass2"));
         users.add(new MyUser("user3", "pass3"));
 
         this.port = port;
+        this.userService = userService;
+        this.responseService = responseService;
     }
 
     public void start() {
@@ -37,8 +41,7 @@ public class Server {
             do {
                 System.out.println("accept connections");
                 socket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler(this, socket,
-                        UserService.getInstance(), ResponseService.getInstance());
+                ClientHandler clientHandler = new ClientHandler(this, socket, userService, responseService);
                 Thread clientThread = new Thread(clientHandler, "Client Handler");
                 clientThread.start();
             } while (listening);

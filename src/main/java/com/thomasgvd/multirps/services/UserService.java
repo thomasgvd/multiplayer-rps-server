@@ -9,16 +9,6 @@ import java.util.Set;
 import static com.thomasgvd.multirps.networking.Server.PLAYER_SPEED;
 
 public class UserService {
-
-    private static UserService instance = null;
-
-    public static UserService getInstance() {
-        if (instance == null) instance = new UserService();
-        return instance;
-    }
-
-    private UserService() {}
-
     public String handleMovement(MyUser user, int xMovement, int yMovement) {
         StringBuilder response = new StringBuilder("");
 

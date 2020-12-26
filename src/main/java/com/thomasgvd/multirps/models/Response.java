@@ -8,11 +8,6 @@ public class Response {
     private boolean respondToAll;
     private boolean successful;
 
-    public Response(int type) {
-        this.type = type;
-        successful = false;
-    }
-
     public Response() {
         successful = false;
     }
